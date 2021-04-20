@@ -20,6 +20,7 @@
 
 import argparse
 import inspect
+import traceback
 import os
 import os.path
 import shutil
@@ -658,8 +659,15 @@ def process_pipelines(args):
 
 
 def main():
-    args = parse_arguments()
-    process_pipelines(args)
+    try:
+        args = parse_arguments()
+        process_pipelines(args)
+    except Exception as e:
+        etype, value, tb = sys.exc_info()
+        for line in traceback.TracebackException(
+                type(value), value, tb, capture_locals=True).format():
+            print(line, file=sys.stderr)
+        sys.exit(1)
 
 # Alternative CLIs
 # ================
